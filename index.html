@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solicitud de Documentación</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .form-container h2 {
+      margin-bottom: 25px;
+      color: #333333;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: #fafafa;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      background-color: #d9534f;
+      color: white;
+      padding: 12px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #c9302c;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Solicitud de Documentación</h2>
+    <form id="form-solicitud">
+        <label for="op">Número de OP:</label>
+        <input type="text" id="op" name="op" required>
+      
+        <label for="tipo">Tipo de Solicitud:</label>
+        <select id="tipo" name="tipo" required>
+          <option value="">-- Selecciona una opción --</option>
+          <option value="1">Documento completo</option>
+          <option value="2">Contratos</option>
+          <option value="3">Pagaré</option>
+        </select>
+      
+        <label for="comentarios">Comentarios adicionales (opcional):</label>
+        <textarea id="comentarios" name="comentarios" rows="4"></textarea>
+      
+        <label for="correo">Correo electrónico del solicitante:</label>
+        <input type="email" id="correo" name="correo" required>
+      
+        <button type="submit">Enviar solicitud</button>
+        <div id="mensaje" class=""></div>
+      </form>
+  </div>
+
+  <!-- reemplaza TU_URL_DE_AUTOMATE con tu URL real -->
+<script>
+    const formulario = document.getElementById("form-solicitud");
+    const mensaje = document.getElementById("mensaje");
+  
+    formulario.addEventListener("submit", function(e) {
+      e.preventDefault();
+  
+      const data = {
+        op: document.getElementById("op").value,
+        tipo: parseInt(document.getElementById("tipo").value),
+        comentarios: document.getElementById("comentarios").value,
+        correo: document.getElementById("correo").value
+      };
+  
+      fetch("https://prod-131.westus.logic.azure.com:443/workflows/d47adb574f284c7eb3f02c38637402ec/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=rM6QSHCp7c2zMAbc27Ccl74K_UWdEuPIFzy9dXh2d7g", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (response.ok) {
+          mensaje.textContent = "✅ Solicitud enviada correctamente.";
+          mensaje.className = "success";
+          formulario.reset();
+        } else {
+          throw new Error("Error al enviar la solicitud.");
+        }
+      })
+      .catch(error => {
+        mensaje.textContent = "❌ Hubo un error al enviar la solicitud.";
+        mensaje.className = "error";
+        console.error("Error:", error);
+      });
+    });
+  </script>
+
+</body>
+</html>
